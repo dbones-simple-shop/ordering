@@ -1,0 +1,73 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: mcr.microsoft.com/dotnet/core/sdk:2.2
+    steps:
+      - checkout
+      - run:
+          name: build
+          command: |
+            cd src
+            ls
+
+            echo 1.0.$CIRCLE_BUILD_NUM >> version
+            cat version
+
+            APP_VERSION=$(cat version)
+            echo $APP_VERSION
+
+            dotnet restore --packages packages -s https://www.myget.org/F/simple-shop/api/v3/index.json -s https://api.nuget.org/v3/index.json
+            dotnet build --no-restore --configuration Release /p:Version=${APP_VERSION}
+            dotnet pack --no-build --no-restore --configuration Release --output ../nupkgs /p:Version=${APP_VERSION}
+      - persist_to_workspace:
+          root: .
+          paths:
+            - src/Ordering/bin
+            - src/nupkgs
+            - src/version
+            - Dockerfile
+
+  publish_nuget:
+    docker:
+      - image: mcr.microsoft.com/dotnet/core/sdk:2.2
+    steps:
+      - attach_workspace:
+          at: ./
+      - run: |
+          pwd
+          cd src
+          cd nupkgs
+          
+          ls
+          dotnet nuget push *.nupkg -k ${nugetapi} -s https://www.myget.org/F/simple-shop/api/v3/index.json
+
+  publish_docker:
+    docker:
+      - image: docker
+    steps:
+      - setup_remote_docker
+      - attach_workspace:
+          at: ./
+      - run: |
+          ls
+          APP_VERSION=$(cat src/version)
+          echo $APP_VERSION
+          
+          docker login -u $dockeruser -p $dockerpassword
+          docker build -t dbonessimplestore/ordering:latest -t dbonessimplestore/ordering:$APP_VERSION .
+          docker push dbonessimplestore/ordering
+
+workflows:
+  version: 2
+  build_and_publish:
+    jobs:
+      - build
+      - publish_nuget:
+          context: build-ctx
+          requires:
+            - build
+      - publish_docker:
+          context: build-ctx
+          requires:
+            - build
