@@ -1,0 +1,42 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  namespace: ordering
+  name: ordering
+spec:
+  template:
+    metadata:
+      labels:
+        app: simple-shop
+        component: ordering
+        team: alpha
+    spec:
+      containers:
+        - name: ordering
+          image: dbonessimplestore/ordering:latest
+          imagePullPolicy: Always
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /hc
+              port: 7003
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 2
+            successThreshold: 2
+            timeoutSeconds: 2
+          # resources:
+          #   limits:
+          #     memory: 512Mi
+          #   requests:
+          #     memory: 256Mi
+          volumeMounts:
+            - name: config
+              mountPath: /app/config
+      volumes:
+        - name: config
+          configMap:
+            name: serviceconfig
+            items:
+              - key: svcconfig
+                path: stagesettings.json

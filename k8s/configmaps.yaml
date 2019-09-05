@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: ordering
+  name: serviceconfig
+  labels:
+    app: simple-shop
+    team: alpha
+data:
+  svcconfig: |-
+    {
+      "logging": {
+        "logLevel": {
+          "default": "Information"
+        },
+        "logger": "fluentd"
+      },
+      
+      "bus": {
+        "receiveEndpoint": "ordering",
+        "host": "queue.data",
+        "username": "guest",
+        "password": "guest"
+      },
+      
+      "database": {
+        "connectionString": "host=document.data;database=Ordering;password=ABC123!!;username=application"
+      }
+    }
+

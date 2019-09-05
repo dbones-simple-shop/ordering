@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Core.Infrastructure;
+﻿using System.IO;
+using Core.Infrastructure.HealthChecks;
 using Core.Infrastructure.Application;
 using Core.Infrastructure.Logging;
 using Core.Infrastructure.Marten;
 using Core.Infrastructure.MassTransit;
-using Core.Infrastructure.Redis;
 using Core.Infrastructure.Serializing;
 using Core.Infrastructure.Swagger;
 using Core.Infrastructure.Tracing;
@@ -25,15 +20,19 @@ namespace Ordering
         {
             var configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
-                .AddEnvironmentVariables()
-                .AddCommandLine(args)
+                .AddJsonFile(Path.Combine("config", "stagesettings.json"), true)
                 .Build();
             
             var port = configuration.GetSection("Application").Get<ApplicationConfiguration>().PortNumber;
 
             var host = WebHost.CreateDefaultBuilder(args)
-                
                 .UseConfiguration(configuration)
+                .ConfigureAppConfiguration(configBuilder =>
+                {
+                    //the Useconfig does not set this for all the application :(
+                    configBuilder.AddJsonFile(Path.Combine("config", "stagesettings.json"), true);
+                })
+
                 .ConfigureLogging((hostingContext, builder) =>
                 {
                     builder.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
@@ -41,6 +40,7 @@ namespace Ordering
                 .ConfigureLogging()
                 .ConfigureMartin()
                 .ConfigureSwagger()
+                .ConfigureHeathChecks()
                 .ConfigureSerializer()
                 .ConfigureMassTransit()
                 .ConfigureTracing(configuration)

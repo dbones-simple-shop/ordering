@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using Ordering.Infrastructure;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
+using Core.Infrastructure.HealthChecks;
 
 namespace Ordering
 {
@@ -49,6 +50,8 @@ namespace Ordering
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.ConfigureApplicationHealthCheck();
 
             app.UseCors("CorsPolicy");
 

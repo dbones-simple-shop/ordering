@@ -18,8 +18,16 @@ jobs:
             echo $APP_VERSION
 
             dotnet restore --packages packages -s https://www.myget.org/F/simple-shop/api/v3/index.json -s https://api.nuget.org/v3/index.json
-            dotnet build --no-restore --configuration Release /p:Version=${APP_VERSION}
-            dotnet pack --no-build --no-restore --configuration Release --output ../nupkgs /p:Version=${APP_VERSION}
+            dotnet build --no-restore --configuration Release --force -p:Version=${APP_VERSION}
+
+            mkdir ./nupkgs
+            mv **/bin/**/*.nupkg ./nupkgs
+
+            cd nupkgs
+            rm *.symbols.nupkg
+            pwd
+            ls
+
       - persist_to_workspace:
           root: .
           paths:
@@ -53,6 +61,8 @@ jobs:
           ls
           APP_VERSION=$(cat src/version)
           echo $APP_VERSION
+
+          ls ./src/Ordering/bin/Release/netcoreapp2.2
           
           docker login -u $dockeruser -p $dockerpassword
           docker build -t dbonessimplestore/ordering:latest -t dbonessimplestore/ordering:$APP_VERSION .
