@@ -34,6 +34,7 @@ jobs:
             - src/Ordering/bin
             - src/nupkgs
             - src/version
+            - k8s
             - Dockerfile
 
   publish_nuget:
