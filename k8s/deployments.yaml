@@ -15,6 +15,16 @@ spec:
         - name: ordering
           image: dbonessimplestore/ordering:latest
           imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /hc
+              port: 7001
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 2
           readinessProbe:
             failureThreshold: 3
             httpGet:
