@@ -22,7 +22,7 @@ spec:
               port: 7001
               scheme: HTTP
             initialDelaySeconds: 10
-            periodSeconds: 10
+            periodSeconds: 30
             successThreshold: 1
             timeoutSeconds: 2
           readinessProbe:

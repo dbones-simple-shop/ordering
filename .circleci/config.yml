@@ -100,7 +100,7 @@ workflows:
           context: build-ctx
           requires:
             - build
-      - deploy:
-          context: build-ctx
-          requires:
-            - publish_docker
+      # - deploy:
+      #     context: build-ctx
+      #     requires:
+      #       - publish_docker

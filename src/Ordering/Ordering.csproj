@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Basket.Events" Version="1.0.52" />
+        <PackageReference Include="Basket.Events" Version="1.0.58" />
         <PackageReference Include="Catalog.Events" Version="0.0.1" />
         <PackageReference Include="Core" Version="1.0.54" />
         <PackageReference Include="Marten" Version="3.7.0" />

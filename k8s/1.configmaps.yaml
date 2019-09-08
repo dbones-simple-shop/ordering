@@ -23,6 +23,10 @@ data:
         "password": "guest"
       },
       
+      "tracing": {
+        "jaegerUrl":"jaeger-collector.istio-system"
+      },
+      
       "database": {
         "connectionString": "host=document.data;database=Ordering;password=ABC123!!;username=application"
       }
