@@ -37,6 +37,7 @@ namespace Ordering
                 {
                     builder.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
                 })
+                .ConfigureApplication()
                 .ConfigureLogging()
                 .ConfigureMartin()
                 .ConfigureSwagger()
