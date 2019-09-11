@@ -15,16 +15,21 @@ data:
         },
         "logger": "fluentd"
       },
+
       
       "bus": {
         "receiveEndpoint": "ordering",
         "host": "queue.data",
         "username": "guest",
-        "password": "guest"
+        "password": "guest",
+        "tracing": "OpenTracing"
       },
       
       "tracing": {
-        "jaegerUrl":"jaeger-collector.istio-system"
+          "tracer": "jaeger",
+          "jaegerAgent": "jaeger-agent.skywalking",
+          "jaegerUrl": "jaeger-collector.istio-system",
+          "dataDogUrl": "datadog.datadog"
       },
       
       "database": {
